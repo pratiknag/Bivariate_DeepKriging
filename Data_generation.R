@@ -1,14 +1,20 @@
-#setwd("/Users/nagp/desktop/directed research/research works going on/")
-
 library(geoR)
 library(MASS)
 library(fields)
-#RFoptions(seed=0) ## *ANY* simulation will have the random seed 0; set
-##                   RFoptions(seed=NA) to make them all random again
-# x <- seq(0,1, length.out = 1000)
+setwd("/home/nagp/Desktop/Ghulam_work/final_folder/Bivariate_DeepKriging/")
+mainDir <- "."
+subDir <- "synthetic_data_simulations/"
+dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
 
+mainDir <- "./real_data/"
+subDir <- "estimation/"
+dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
+
+mainDir <- "./real_data/"
+subDir <- "splitted_data/"
+dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
 ########### Biv nongaussian ##################
-setwd("/home/nagp/Desktop/Ghulam_work/")
+
 # set.seed(12345567)
 x <- seq(0,1, length.out = 80)
 y <- seq(0,1, length.out = 80)
