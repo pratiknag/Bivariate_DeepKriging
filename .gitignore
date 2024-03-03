@@ -56,3 +56,4 @@ python_scripts/phi.csv
 synthetic_data_simulations_non-Stationary/
 synthetic_data_simulations_nonGaussian/
 synthetic_data_simulations_nonGaussian_cov/
+python_scripts/ipynb_files/Biv_nonGaussian_model.h5

@@ -36,7 +36,7 @@ from python_libs.pred_interval_functions import calc_distance,get_nearest_data
 
 
 # number of simulations
-num_sim = 20
+num_sim = 50
 
 def main():
     print("         ")
@@ -48,6 +48,8 @@ def main():
     mpiw_var2 = []
     picp_var1 = []
     picp_var2 = []
+    phi = pd.read_csv("python_scripts/phi.csv", sep = ",")
+    phi_train,phi_test = train_test_split(pd.DataFrame.to_numpy(phi), test_size = 0.1, random_state=123)
     for sim in range(num_sim):
         df_train = pd.read_csv("synthetic_data_simulations_non-Stationary/training_data/2D_nonstationary_1200_"+str(sim+1)+"-train.csv", 
                              sep = ",")
@@ -68,44 +70,44 @@ def main():
         s_test = np.vstack((df_test["x"],df_test["y"])).T
         y_test = np.array(np.array(df_test[["var1","var2"]]))
         
-        num_basis = [2**2,3**2,5**2]
-        knots_1d = [np.linspace(0,1,int(np.sqrt(i))) for i in num_basis]
-        ##Wendland kernel
-        K = 0
-        phi = np.zeros((N_train, sum(num_basis)))
+#         num_basis = [2**2,3**2,5**2]
+#         knots_1d = [np.linspace(0,1,int(np.sqrt(i))) for i in num_basis]
+#         ##Wendland kernel
+#         K = 0
+#         phi = np.zeros((N_train, sum(num_basis)))
 
-        for res in range(len(num_basis)):
-            theta = 1 #/np.sqrt(num_basis[res])*2.5
-            knots_s1, knots_s2 = np.meshgrid(knots_1d[res],knots_1d[res])
-            knots = np.column_stack((knots_s1.flatten(),knots_s2.flatten()))
-            for i in range(num_basis[res]):
-                d = np.linalg.norm(s_train-knots[i,:],axis=1)/theta
-                for j in range(len(d)):
-                    if d[j] >= 0 and d[j] <= 1:
-                        phi[j,i + K] = (1-d[j])**6 * (35 * d[j]**2 + 18 * d[j] + 3)/3
-                    else:
-                        phi[j,i + K] = 0
-            K = K + num_basis[res]
+#         for res in range(len(num_basis)):
+#             theta = 1 #/np.sqrt(num_basis[res])*2.5
+#             knots_s1, knots_s2 = np.meshgrid(knots_1d[res],knots_1d[res])
+#             knots = np.column_stack((knots_s1.flatten(),knots_s2.flatten()))
+#             for i in range(num_basis[res]):
+#                 d = np.linalg.norm(s_train-knots[i,:],axis=1)/theta
+#                 for j in range(len(d)):
+#                     if d[j] >= 0 and d[j] <= 1:
+#                         phi[j,i + K] = (1-d[j])**6 * (35 * d[j]**2 + 18 * d[j] + 3)/3
+#                     else:
+#                         phi[j,i + K] = 0
+#             K = K + num_basis[res]
         
         
-        K = 0
-        phi_test = np.zeros((N_test, sum(num_basis)))
+#         K = 0
+#         phi_test = np.zeros((N_test, sum(num_basis)))
 
-        for res in range(len(num_basis)):
-            theta = 1 #/np.sqrt(num_basis[res])*2.5
-            knots_s1, knots_s2 = np.meshgrid(knots_1d[res],knots_1d[res])
-            knots = np.column_stack((knots_s1.flatten(),knots_s2.flatten()))
-            for i in range(num_basis[res]):
-                d = np.linalg.norm(s_test-knots[i,:],axis=1)/theta
-                for j in range(len(d)):
-                    if d[j] >= 0 and d[j] <= 1:
-                        phi_test[j,i + K] = (1-d[j])**6 * (35 * d[j]**2 + 18 * d[j] + 3)/3
-                    else:
-                        phi_test[j,i + K] = 0
-            K = K + num_basis[res]
+#         for res in range(len(num_basis)):
+#             theta = 1 #/np.sqrt(num_basis[res])*2.5
+#             knots_s1, knots_s2 = np.meshgrid(knots_1d[res],knots_1d[res])
+#             knots = np.column_stack((knots_s1.flatten(),knots_s2.flatten()))
+#             for i in range(num_basis[res]):
+#                 d = np.linalg.norm(s_test-knots[i,:],axis=1)/theta
+#                 for j in range(len(d)):
+#                     if d[j] >= 0 and d[j] <= 1:
+#                         phi_test[j,i + K] = (1-d[j])**6 * (35 * d[j]**2 + 18 * d[j] + 3)/3
+#                     else:
+#                         phi_test[j,i + K] = 0
+#             K = K + num_basis[res]
         
         
-        s_train_ensemble, s_train_mse, X_train_ensemble, X_train_mse, y_train_ensemble, y_train_mse= train_test_split(s_train,         phi, y_train, test_size=0.1)
+        s_train_ensemble, s_train_mse, X_train_ensemble, X_train_mse, y_train_ensemble, y_train_mse= train_test_split(s_train,         phi_train, y_train, test_size=0.1)
         
         # base model layers 
 
