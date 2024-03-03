@@ -1,0 +1,58 @@
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.pyc
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sqlite
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+.Rhistory
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# folders
+#####################
+Model_Example/
+__pycache__/
+.ipynb_checkpoints/
+torchkit/__pycache__/
+R_scripts/.DS_Store
+python_scripts/python_libs/__pycache__/
+python_scripts/.ipynb_checkpoints/
+GKriging_cov_results/
+GKriging_nonstat_results/
+GKriging_results/
+Untitled.ipynb
+plot_results/
+python_scripts/phi.csv
+synthetic_data_simulations_non-Stationary/
+synthetic_data_simulations_nonGaussian/
+synthetic_data_simulations_nonGaussian_cov/
