@@ -8,7 +8,7 @@ library(geoR)
 library(MASS)
 library(fields)
 source("R_scripts/GKriging_functions.R")
-num_sim = 100
+num_sim = args[2]
 file_path = paste0("synthetic_data_simulations_non-Stationary/training_data/2D_nonstationary_1200_",1,"-train.csv")
   data_train = read.csv(file_path, header = T)
   file_path = paste0("synthetic_data_simulations_non-Stationary/testing_data/2D_nonstationary_1200_",1,"-test.csv")
