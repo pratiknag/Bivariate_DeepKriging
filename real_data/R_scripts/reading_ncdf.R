@@ -5,7 +5,7 @@ library(sp)
 library(ncdf4)
 library(ggplot2)
 
-setwd("/home/nagp/Desktop/Ghulam_work/final_folder/Bivariate_DeepKriging/")
+setwd("/home/nagp/Desktop/Bivariate_DeepKriging/")
 
 
 ## resolution 5X5 km

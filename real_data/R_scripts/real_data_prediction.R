@@ -9,7 +9,7 @@ library(RColorBrewer)
 library(geoR)
 library(fields)
 
-setwd("/home/nagp/Desktop/Ghulam_work/final_folder/Bivariate_DeepKriging/")
+setwd("/home/nagp/Desktop/Bivariate_DeepKriging/")
 df = read.table("real_data/testing_real_dataset_450000.csv",header = TRUE, sep = ",")
 
 fields::quilt.plot(df$lon.1, df$lat.1, df$Z2)
@@ -157,8 +157,6 @@ fields::quilt.plot(test.data$lon.1, test.data$lat.1, predictions2)
 ## 0.970000,0.950000
 ##  1.222264529004371,1.3361754733446265
 
-  
-## deepkriging 450000 data points time taken for interval
   
 saveRDS(MSE_var1,"real_MSE_var1.rds")
 saveRDS(MSE_var2,"real_MSE_var2.rds")
