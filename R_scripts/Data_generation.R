@@ -44,10 +44,10 @@ dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
 # subDir <- "testing_data/"
 # dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
 
-num_sim = 100
+num_sim = args[2]
 
 
-
+print("####################### Simulating non-stationary datasets ########################")
 ##############################################
 ############# Non-Stationary #################
 ##############################################
@@ -98,18 +98,19 @@ for(i in 1:num_sim){
   
   var1 = rowSums((a*even_cols^(3/2) + c*odd_cols) - b*sqrt(even_cols*odd_cols))
   var2 = rowSums((d*even_cols - f*odd_cols^(3/2)))
-  print(cor(var1,var2))
-  par(mfrow=c(1,2), mar=c(5.1,4.1,4.1,2.1))
-  
-  fields::quilt.plot(s[,1],s[,2], var1, main =
-               "variable 1", nx = 30, ny = 30)
-  fields::quilt.plot(s[,1],s[,2], var2,main = "variable 2", nx = 30, ny = 30)
+  # print(cor(var1,var2))
+  # par(mfrow=c(1,2), mar=c(5.1,4.1,4.1,2.1))
+  # 
+  # fields::quilt.plot(s[,1],s[,2], var1, main =
+  #              "variable 1", nx = 30, ny = 30)
+  # fields::quilt.plot(s[,1],s[,2], var2,main = "variable 2", nx = 30, ny = 30)
   
   df = data.frame(x=s[,1],y=s[,2],var1 = var1, var2 = var2)
   write.csv(x = df,file = paste0("synthetic_data_simulations_non-Stationary/2d_nonstationary_1200_",i,".csv"), row.names = F)
 
 }
 
+print("####################### Simulating non-Gaussian datasets ########################")
 ##############################################
 ######## NonGaussian with covariates #########
 ##############################################
@@ -184,13 +185,13 @@ for(i in 1:num_sim){
   h = 0.5
   tukey_var2 = ((exp(g*var2)-1)/g) * exp(h*(var2^2)/2) + mean 
   
-  par(mfrow=c(1,3), mar=c(5.1,4.1,4.1,2.1))
-  
-  quilt.plot(X,Y, mean, main =
-               "variable 1", nx = 35, ny = 35)
-  quilt.plot(X,Y, tukey_var1, main =
-               "variable 1", nx = 35, ny = 35)
-  quilt.plot(X,Y, tukey_var2,main = "variable 2", nx = 35, ny = 35)
+  # par(mfrow=c(1,3), mar=c(5.1,4.1,4.1,2.1))
+  # 
+  # quilt.plot(X,Y, mean, main =
+  #              "variable 1", nx = 35, ny = 35)
+  # quilt.plot(X,Y, tukey_var1, main =
+  #              "variable 1", nx = 35, ny = 35)
+  # quilt.plot(X,Y, tukey_var2,main = "variable 2", nx = 35, ny = 35)
   
   df = data.frame(cov1 = x1, cov2 = x2, 
                   cov3 = x3, cov4 = x4,
@@ -198,97 +199,5 @@ for(i in 1:num_sim){
                   var1 = tukey_var1, var2 = tukey_var2)
   write.csv(x = df,file = paste0("synthetic_data_simulations_nonGaussian_cov/2d_nongaussian_1200_",i,".csv"), row.names = F)
 }
-
-
-##############################################
-##### NonGaussian without covariates #########
-##############################################
-# set.seed(12345567)
-# 
-# x = seq(0,1, length.out = 80)
-# y = seq(0,1, length.out = 80)
-# 
-# d1 <- expand.grid(x = x, y = y)
-# n_sample = 1200
-# sample1 = sample(1:6400,n_sample)
-# d1 = d1[sample1,]
-# X = d1$x              # X, Y co-ordinates getting generated here
-# Y = d1$y
-# m = as.matrix(dist(data.frame(X=X,Y=Y)))
-# 
-# a = 0.3
-# s= 0.8
-# m1 = m/a
-# m1[m1>=1] = 0
-# C1 = s*(1 - (3/2)*m1 + (1/2)*m1^3)
-# for(i in 1:n_sample){
-#   for(j in 1:n_sample){
-#     if(i!=j & C1[i,j] == s) C1[i,j] = 0
-#   }
-# }
-# 
-# a = 0.05
-# s= 1
-# m1 = m/a
-# m1[m1>=1] = 0
-# C2 = s*(1 - (3/2)*m1 + (1/2)*m1^3)
-# for(i in 1:n_sample){
-#   for(j in 1:n_sample){
-#     if(i!=j & C2[i,j] == s) C2[i,j] = 0
-#   }
-# }
-# b11 = 0.8
-# b12 = 0.6
-# b21 = 0.26
-# b22 = 0.7
-# COV11=(b11^2)*C1+(b12^2)*C2
-# COV22=(b21^2)*C1+(b22^2)*C2
-# COV12=(b11*b21)*C1+(b12*b22)*C2
-# C=rbind(cbind(COV11,COV12),cbind(t(COV12),COV22))
-# 
-# for(i in 1:num_sim){
-#   simulation = mvrnorm(1,rep(0,2*1200),C)
-#   
-#   var1 = simulation[1:1200]
-#   var2 = simulation[1201:(2*1200)]
-#   g = 0.5
-#   h = 0.4
-#   
-#   tukey_var1 = ((exp(g*var1)-1)/g) * exp(h*(var1^2)/2)
-#   
-#   g = -0.4
-#   h = 0.4
-#   tukey_var2 = ((exp(g*var2)-1)/g) * exp(h*(var2^2)/2)
-#   
-#   par(mfrow=c(1,2), mar=c(5.1,4.1,4.1,2.1))
-#   
-#   # quilt.plot(X,Y, tukey_var1, main =
-#   #              "variable 1", nx = 40, ny = 30)
-#   # quilt.plot(X,Y, tukey_var2,main = "variable 2", nx = 40, ny = 30)
-#   
-#   df = data.frame(x=X,y=Y,var1 = tukey_var1, var2 = tukey_var2)
-#   write.csv(x = df,file = paste0("synthetic_data_simulations_nonGaussian/2d_nongaussian_1200_",i,".csv"), row.names = F)
-# }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

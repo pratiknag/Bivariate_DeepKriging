@@ -38,7 +38,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
 # Load nonGaussian datasets and do classification on them 
-num_sim = 50
+num_sim = sys.argv[0]
 
 # Functions for calculation of MSE and MAE
 def mse(y_pred,y_true):

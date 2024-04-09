@@ -36,7 +36,7 @@ from python_libs.pred_interval_functions import calc_distance,get_nearest_data
 
 
 # number of simulations
-num_sim = 30
+num_sim = sys.argv[0]
 
 def main():
     print("         ")

@@ -39,7 +39,7 @@ from sklearn.preprocessing import MinMaxScaler
 import sys
 import os
 # Load nonGaussian datasets and do classification on them 
-num_sim = 30
+num_sim = sys.argv[0]
 
 # Functions for calculation of MSE and MAE
 def mse(y_pred,y_true):
