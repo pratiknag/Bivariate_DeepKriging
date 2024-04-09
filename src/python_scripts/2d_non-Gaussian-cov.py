@@ -7,17 +7,21 @@ Created on Tuesday August  29 23:33:04 2023
 @author: Pratik
 """
 
-
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+# import warnings
+# warnings.filterwarnings('ignore')
 import pandas as pd
+# import tensorflow as tf
+# tf.get_logger().setLevel('ERROR')
 import keras
 from keras.models import Sequential,Model
 from keras.layers import Dense, Dropout, BatchNormalization,Input
-from keras.wrappers.scikit_learn import KerasRegressor
+# from keras.wrappers.scikit_learn import KerasRegressor
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras import regularizers,initializers
 from keras.layers import GaussianNoise,LeakyReLU
 import keras.backend as Kb
-
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import StandardScaler
@@ -25,21 +29,16 @@ from sklearn.pipeline import Pipeline
 from sklearn.utils import class_weight
 import numpy as np
 from numpy import exp
-# Library for Gaussian process
-# import GPy
-##Library for visualization
 import matplotlib.pyplot as plt
-# get_ipython().run_line_magic('matplotlib', 'inline')
-# get_ipython().run_line_magic('config', "InlineBackend.figure_format = 'svg'")
 import matplotlib;matplotlib.rcParams['figure.figsize'] = (8,6)
 import pylab 
 import time
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 import sys
-import os
-# Load nonGaussian datasets and do classification on them 
-num_sim = sys.argv[0]
+
+
+num_sim = int(sys.argv[1])
 
 # Functions for calculation of MSE and MAE
 def mse(y_pred,y_true):
@@ -119,17 +118,12 @@ def model_function(df_train, phi, sim_iteration,model_saving_location):
     #model.add(BatchNormalization())
     model.add(Dense(2, activation='linear'))
     
-    optimizer = keras.optimizers.Adam(lr=0.001)
+    optimizer = keras.optimizers.Adam(learning_rate=0.001)
     model.compile(optimizer=optimizer, loss= 'mse', metrics=['mae','mse'])
 
     
     
-#     y_pred = model.predict(encoder_test)
 
-
-#     # Mean Squared Error
-#     mse_var1.append(mse(y_pred[:,0], y_test[:,0]))
-#     mse_var2.append(mse(y_pred[:,1], y_test[:,1]))
     print('<<<<<<<<<<<<<<<< Fitting DNN-model for %4d-th simulation >>>>>>>>>>>>>>>>>'%(sim_iteration + 1))
     result = model.fit(phi, y, 
                        epochs = 1000, batch_size = 512, verbose = 0)
@@ -138,10 +132,7 @@ def model_function(df_train, phi, sim_iteration,model_saving_location):
                  ModelCheckpoint(filepath=model_saving_location+'/Biv_nonGaussian_model.h5', monitor='val_loss', save_best_only=True)]
     result = model.fit(phi, y, callbacks=callbacks, 
                        validation_split = 0.1, epochs = 250, batch_size = 512, verbose = 0)
-#     result = model.fit(phi, dummy_y, callbacks=callbacks, class_weight = class_weight_dict,
-#                validation_split = 0.1, epochs = 500, batch_size = 128, verbose = 0)
 
-#     model = keras.models.load_model('Biv_nonGaussian_model.h5', custom_objects={'custom_mse':custom_mse})
     model = keras.models.load_model(model_saving_location+'/Biv_nonGaussian_model.h5')
     return model
 
@@ -154,11 +145,9 @@ def main():
     print("         ")
     mse_var1 = []
     mse_var2 = []
-#     cwd = os.getcwd()
-#     print(cwd)
-#     exit(0);
-    for sim in range(num_sim):
 
+    for sim in range(num_sim):
+# Load nonGaussian datasets and do classification on them 
         df_loc = pd.read_csv("synthetic_data_simulations_nonGaussian_cov/2d_nongaussian_1200_"+str(sim+1)+".csv", 
                              sep = ",")
         df_train,df_test = train_test_split(df_loc, test_size = 0.1, random_state=123)
@@ -198,13 +187,11 @@ def main():
         scaler = MinMaxScaler()
         scaler.fit(covariates_train)
         covariates_train = scaler.transform(covariates_train)
-#         print(covariates_train.shape)
-#         print(covariates_train)
-#         print(phi.shape)
+
         phi = np.hstack((covariates_train,phi))
         print(phi.shape)
         # Training the model 
-#         sys.exit()
+
         model_saving_location = 'Model_Example'
         model = model_function(df_train1,phi,sim,model_saving_location)
         # Basis functions for test set 
@@ -235,16 +222,11 @@ def main():
             K = K + num_basis[res]
         phi_test = np.hstack((covariates_test,phi_test))
 
-        
-        
-        
         y_pred = model.predict(phi_test)
-#         print(y_pred)
-        
+
         y_pred[:,0] = (y_pred[:,0]*np.sqrt(np.var(df_train["var1"]))) + np.mean(df_train["var1"])
         y_pred[:,1] = (y_pred[:,1]*np.sqrt(np.var(df_train["var2"]))) + np.mean(df_train["var2"])
-#         print(y_pred)
-#         print(y_test)
+
         mse_var1.append(mse(y_pred[:,0], y_test[:,0]))
         mse_var2.append(mse(y_pred[:,1], y_test[:,1]))
     df_mse = pd.DataFrame(np.vstack((mse_var1,mse_var2)).T, columns = ["mse_var1","mse_var2"])

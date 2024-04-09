@@ -49,5 +49,6 @@ Results can be reproduced by running the following command:
 ```
 bash run.sh
 ```
-Running the above will create files related to validation results for the non-Gaussian and non-stationary simulation scenarios in the `plot_results` directory. 
+Executing the aforementioned code will generate files pertaining to validation results for the non-Gaussian and non-stationary simulation scenarios within the `plot_results` directory. It's important to note that the provided code runs all simulations simultaneously, including the cokriging models, which may result in significant computational intensity. 
+
 To create the boxplots as shown in the paper run the file `R_scripts/plot_results_reproducible.R` in R Studio.

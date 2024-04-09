@@ -7,17 +7,17 @@ Created on Tuesday August  29 23:33:04 2023
 @author: Pratik
 """
 
-
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import pandas as pd
 import keras
 from keras.models import Sequential,Model
 from keras.layers import Dense, Dropout, BatchNormalization,Input
-from keras.wrappers.scikit_learn import KerasRegressor
+# from keras.wrappers.scikit_learn import KerasRegressor
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras import regularizers,initializers
 from keras.layers import GaussianNoise,LeakyReLU
 import keras.backend as Kb
-
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import StandardScaler
@@ -25,20 +25,16 @@ from sklearn.pipeline import Pipeline
 from sklearn.utils import class_weight
 import numpy as np
 from numpy import exp
-# Library for Gaussian process
-# import GPy
-##Library for visualization
 import matplotlib.pyplot as plt
-# get_ipython().run_line_magic('matplotlib', 'inline')
-# get_ipython().run_line_magic('config', "InlineBackend.figure_format = 'svg'")
 import matplotlib;matplotlib.rcParams['figure.figsize'] = (8,6)
 import pylab 
 import time
+import sys
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
 # Load nonGaussian datasets and do classification on them 
-num_sim = sys.argv[0]
+num_sim = int(sys.argv[1])
 
 # Functions for calculation of MSE and MAE
 def mse(y_pred,y_true):
@@ -117,17 +113,12 @@ def model_function(df_train, phi, sim_iteration,model_saving_location):
     #model.add(BatchNormalization())
     model.add(Dense(2, activation='linear'))
     
-    optimizer = keras.optimizers.Adam(lr=0.001)
+    optimizer = keras.optimizers.Adam(learning_rate=0.001)
     model.compile(optimizer=optimizer, loss= 'mse', metrics=['mae','mse'])
 
     
     
-#     y_pred = model.predict(encoder_test)
 
-
-#     # Mean Squared Error
-#     mse_var1.append(mse(y_pred[:,0], y_test[:,0]))
-#     mse_var2.append(mse(y_pred[:,1], y_test[:,1]))
     print('<<<<<<<<<<<<<<<< Fitting DNN-model for %2d-th simulation >>>>>>>>>>>>>>>>>'%(sim_iteration + 1))
     result = model.fit(phi, y, 
                        validation_split = 0.1, epochs = 500, batch_size = 256, verbose = 0)
@@ -136,8 +127,6 @@ def model_function(df_train, phi, sim_iteration,model_saving_location):
                  ModelCheckpoint(filepath=model_saving_location+'/Biv_nonstationary_model.h5', monitor='val_loss', save_best_only=True)]
     result = model.fit(phi, y, callbacks=callbacks, 
                        validation_split = 0.1, epochs = 1000, batch_size = 256, verbose = 0)
-#     result = model.fit(phi, dummy_y, callbacks=callbacks, class_weight = class_weight_dict,
-#                validation_split = 0.1, epochs = 500, batch_size = 128, verbose = 0)
 
     model = keras.models.load_model(model_saving_location+'/Biv_nonstationary_model.h5')
     return model
@@ -155,7 +144,7 @@ def main():
         
         df_loc = pd.read_csv("synthetic_data_simulations_non-Stationary/2d_nonstationary_1200_"+str(sim+1)+".csv", 
                              sep = ",")
-        phi = pd.read_csv("python_scripts/phi.csv", 
+        phi = pd.read_csv("src/python_scripts/phi.csv", 
                              sep = ",")
         df_train,df_test,phi_train,phi_test = train_test_split(df_loc,pd.DataFrame.to_numpy(phi), test_size = 0.1, random_state=123)
         df_train.reset_index(drop=True, inplace=True)
@@ -170,27 +159,6 @@ def main():
         N = len(df_train1)
         s = np.vstack((df_train1["x"],df_train1["y"])).T
 
-#         num_basis = [2**2,3**2,5**2]
-#         knots_1d = [np.linspace(0,1,int(np.sqrt(i))) for i in num_basis]
-#         ##Wendland kernel
-#         K = 0
-#         phi = np.zeros((N, sum(num_basis)))
-
-#         for res in range(len(num_basis)):
-#             theta = 1 #1/np.sqrt(num_basis[res])*2.5
-#             knots_s1, knots_s2 = np.meshgrid(knots_1d[res],knots_1d[res])
-#             knots = np.column_stack((knots_s1.flatten(),knots_s2.flatten()))
-#             for i in range(num_basis[res]):
-#                 d = np.linalg.norm(s-knots[i,:],axis=1)/theta
-#                 for j in range(len(d)):
-#                     if d[j] >= 0 and d[j] <= 1:
-#                         phi[j,i + K] = (1-d[j])**6 * (35 * d[j]**2 + 18 * d[j] + 3)/3
-#                     else:
-#                         phi[j,i + K] = 0
-#             K = K + num_basis[res]
-
-
-
         # Training the model 
         model_saving_location = 'Model_Example'
         model = model_function(df_train1,phi_train,sim,model_saving_location)
@@ -200,35 +168,10 @@ def main():
         N = len(df_test)
         s = np.vstack((df_test["x"],df_test["y"])).T
         y_test = np.array(df_test[["var1","var2"]]) 
-#         knots_1d = [np.linspace(0,1,int(np.sqrt(i))) for i in num_basis]
-#         ##Wendland kernel
-#         K = 0
-#         phi_test = np.zeros((N, sum(num_basis)))
-
-#         for res in range(len(num_basis)):
-#             theta = 1 #1/np.sqrt(num_basis[res])*2.5
-#             knots_s1, knots_s2 = np.meshgrid(knots_1d[res],knots_1d[res])
-#             knots = np.column_stack((knots_s1.flatten(),knots_s2.flatten()))
-#             for i in range(num_basis[res]):
-#                 d = np.linalg.norm(s-knots[i,:],axis=1)/theta
-#                 for j in range(len(d)):
-#                     if d[j] >= 0 and d[j] <= 1:
-#                         phi_test[j,i + K] = (1-d[j])**6 * (35 * d[j]**2 + 18 * d[j] + 3)/3
-#                     else:
-#                         phi_test[j,i + K] = 0
-#             K = K + num_basis[res]
-
-
         y_pred = model.predict(phi_test)
         y_pred[:,0] = (y_pred[:,0]*np.sqrt(np.var(df_train["var1"]))) + np.mean(df_train["var1"])
         y_pred[:,1] = (y_pred[:,1]*np.sqrt(np.var(df_train["var2"]))) + np.mean(df_train["var2"])
-#         print((y_pred[:,0] - y_test[:,0])**2)
-#         print("**********************************")
-#         print((y_pred[:,1] - y_test[:,1])**2)
-#         print("**********************************")
-#         print(y_pred)
-#         print("**********************************")
-#         print(y_test)
+
         mse_var1.append(mse(y_pred[:,0], y_test[:,0]))
         mse_var2.append(mse(y_pred[:,1], y_test[:,1]))
         

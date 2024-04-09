@@ -59,7 +59,7 @@ optim_indmat_loglik = function(par){
         control=list(trace=6,
                      pgtol=0,
                      parscale=rep(0.1,length(par)),
-                     maxit=50))
+                     maxit=500))
 }
 
 ########################################################################

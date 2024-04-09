@@ -6,7 +6,9 @@ library(ggpubr)
 library(RColorBrewer)
 library(geoR)
 library(latex2exp)
-file_path = "/Users/nagp/Desktop/Biv.DeepKriging/Bivariate_DeepKriging/plot_results"
+## Set file path
+file_path = "/Users/nagp/Desktop/Biv.DeepKriging/Bivariate_DeepKriging/plot_results" 
+                                                                        # File path includes the plot_result folder 
 setwd(file_path)
 
 ### boxplot for nonGaussian with covariates

@@ -7,11 +7,13 @@ Created on Tuesday August  29 23:33:04 2023
 @author: Pratik
 """
 
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import pandas as pd
 import keras
 from keras.models import Sequential,Model
 from keras.layers import Dense, Dropout, BatchNormalization,Input
-from keras.wrappers.scikit_learn import KerasRegressor
+# from keras.wrappers.scikit_learn import KerasRegressor
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import KFold
@@ -20,23 +22,18 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import Pipeline
 import numpy as np
 from numpy import exp
-# Library for Gaussian process
-# import GPy
-##Library for visualization
 import matplotlib.pyplot as plt
-# %matplotlib inline
-# %config InlineBackend.figure_format = 'svg'
-# import matplotlib;matplotlib.rcParams['figure.figsize'] = (8,6)
 from sklearn.model_selection import train_test_split
 import pylab 
 import time
+import sys
 from tqdm import tqdm
 from python_libs.pred_interval_functions import mse,mae,fit_model,fit_ensemble,y_list_uni,variance,predict_with_pi
 from python_libs.pred_interval_functions import calc_distance,get_nearest_data
 
 
 # number of simulations
-num_sim = sys.argv[0]
+num_sim = int(sys.argv[1])
 
 def main():
     print("         ")
@@ -130,7 +127,7 @@ def main():
         s_train_ensemble1, _, X_train_ensemble1, __, y_train_ensemble1, ___= train_test_split(s_train_ensemble, X_train_ensemble, y_train_ensemble, test_size=0.2)
         
         base_model = Model(inputs = input_dim, outputs = final_layer)
-        optimizer = keras.optimizers.Adam(lr=0.01)
+        optimizer = keras.optimizers.Adam(learning_rate=0.01)
         # Compile the Model
         base_model.compile(optimizer = optimizer, loss = 'mae')
 #         base_model.summary()

@@ -7,11 +7,13 @@ Created on Tuesday August  29 23:33:04 2023
 @author: Pratik
 """
 
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import pandas as pd
 import keras
 from keras.models import Sequential,Model
 from keras.layers import Dense, Dropout, BatchNormalization,Input
-from keras.wrappers.scikit_learn import KerasRegressor
+# from keras.wrappers.scikit_learn import KerasRegressor
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import KFold
@@ -20,23 +22,18 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import Pipeline
 import numpy as np
 from numpy import exp
-# Library for Gaussian process
-# import GPy
-##Library for visualization
 import matplotlib.pyplot as plt
-# %matplotlib inline
-# %config InlineBackend.figure_format = 'svg'
-# import matplotlib;matplotlib.rcParams['figure.figsize'] = (8,6)
 from sklearn.model_selection import train_test_split
 import pylab 
 import time
+import sys
 from tqdm import tqdm
 from python_libs.pred_interval_functions import mse,mae,fit_model,fit_ensemble,y_list_uni,variance,predict_with_pi
 from python_libs.pred_interval_functions import calc_distance,get_nearest_data
 
 
 # number of simulations
-num_sim = sys.argv[0]
+num_sim = int(sys.argv[1])
 
 def main():
     print("         ")
@@ -48,7 +45,7 @@ def main():
     mpiw_var2 = []
     picp_var1 = []
     picp_var2 = []
-    phi = pd.read_csv("python_scripts/phi.csv", sep = ",")
+    phi = pd.read_csv("src/python_scripts/phi.csv", sep = ",")
     phi_train,phi_test = train_test_split(pd.DataFrame.to_numpy(phi), test_size = 0.1, random_state=123)
     for sim in range(num_sim):
         df_train = pd.read_csv("synthetic_data_simulations_non-Stationary/training_data/2D_nonstationary_1200_"+str(sim+1)+"-train.csv", 
@@ -70,42 +67,6 @@ def main():
         s_test = np.vstack((df_test["x"],df_test["y"])).T
         y_test = np.array(np.array(df_test[["var1","var2"]]))
         
-#         num_basis = [2**2,3**2,5**2]
-#         knots_1d = [np.linspace(0,1,int(np.sqrt(i))) for i in num_basis]
-#         ##Wendland kernel
-#         K = 0
-#         phi = np.zeros((N_train, sum(num_basis)))
-
-#         for res in range(len(num_basis)):
-#             theta = 1 #/np.sqrt(num_basis[res])*2.5
-#             knots_s1, knots_s2 = np.meshgrid(knots_1d[res],knots_1d[res])
-#             knots = np.column_stack((knots_s1.flatten(),knots_s2.flatten()))
-#             for i in range(num_basis[res]):
-#                 d = np.linalg.norm(s_train-knots[i,:],axis=1)/theta
-#                 for j in range(len(d)):
-#                     if d[j] >= 0 and d[j] <= 1:
-#                         phi[j,i + K] = (1-d[j])**6 * (35 * d[j]**2 + 18 * d[j] + 3)/3
-#                     else:
-#                         phi[j,i + K] = 0
-#             K = K + num_basis[res]
-        
-        
-#         K = 0
-#         phi_test = np.zeros((N_test, sum(num_basis)))
-
-#         for res in range(len(num_basis)):
-#             theta = 1 #/np.sqrt(num_basis[res])*2.5
-#             knots_s1, knots_s2 = np.meshgrid(knots_1d[res],knots_1d[res])
-#             knots = np.column_stack((knots_s1.flatten(),knots_s2.flatten()))
-#             for i in range(num_basis[res]):
-#                 d = np.linalg.norm(s_test-knots[i,:],axis=1)/theta
-#                 for j in range(len(d)):
-#                     if d[j] >= 0 and d[j] <= 1:
-#                         phi_test[j,i + K] = (1-d[j])**6 * (35 * d[j]**2 + 18 * d[j] + 3)/3
-#                     else:
-#                         phi_test[j,i + K] = 0
-#             K = K + num_basis[res]
-        
         
         s_train_ensemble, s_train_mse, X_train_ensemble, X_train_mse, y_train_ensemble, y_train_mse= train_test_split(s_train,         phi_train, y_train, test_size=0.1)
         
@@ -122,7 +83,7 @@ def main():
         s_train_ensemble1, _, X_train_ensemble1, __, y_train_ensemble1, ___= train_test_split(s_train_ensemble, X_train_ensemble, y_train_ensemble, test_size=0.2)
         
         base_model = Model(inputs = input_dim, outputs = final_layer)
-        optimizer = keras.optimizers.Adam(lr=0.01)
+        optimizer = keras.optimizers.Adam(learning_rate=0.01)
         # Compile the Model
         base_model.compile(optimizer = optimizer, loss = 'mae')
 #         base_model.summary()

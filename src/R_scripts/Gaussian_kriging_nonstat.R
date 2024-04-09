@@ -7,7 +7,7 @@ library(doParallel)
 library(geoR)
 library(MASS)
 library(fields)
-source("R_scripts/GKriging_functions.R")
+source("src/R_scripts/GKriging_functions.R")
 num_sim = args[2]
 file_path = paste0("synthetic_data_simulations_non-Stationary/training_data/2D_nonstationary_1200_",1,"-train.csv")
   data_train = read.csv(file_path, header = T)
@@ -18,7 +18,7 @@ file_path = paste0("synthetic_data_simulations_non-Stationary/training_data/2D_n
 cl <- makeCluster(parallel::detectCores())
 registerDoParallel(cl)   #create a cluster
 parallel.function.lmc = function(sim){
-	source("R_scripts/GKriging_functions.R")
+	source("src/R_scripts/GKriging_functions.R")
   file_path = paste0("synthetic_data_simulations_non-Stationary/training_data/2D_nonstationary_1200_",sim,"-train.csv")
   data_train = read.csv(file_path, header = T)
   file_path = paste0("synthetic_data_simulations_non-Stationary/testing_data/2D_nonstationary_1200_",sim,"-test.csv")
@@ -38,7 +38,7 @@ optim_lmc.loglikelihood = function(par){
         control=list(trace=4,
                      pgtol=0,
                      parscale=rep(0.1,length(par)),
-                     maxit=300))
+                     maxit=500))
 }
   fit.Model.lmc = optim_lmc.loglikelihood(par=init.lmc)
   pred = lmc.pred.summary(fit.Model.lmc$par, data_train, data_test)
@@ -46,7 +46,7 @@ optim_lmc.loglikelihood = function(par){
   return(pred)
 }
 parallel.function.par_Matern = function(sim){
-  source("R_scripts/GKriging_functions.R")
+  source("src/R_scripts/GKriging_functions.R")
   file_path = paste0("synthetic_data_simulations_non-Stationary/training_data/2D_nonstationary_1200_",sim,"-train.csv")
   data_train = read.csv(file_path, header = T)
   file_path = paste0("synthetic_data_simulations_non-Stationary/testing_data/2D_nonstationary_1200_",sim,"-test.csv")
@@ -66,7 +66,7 @@ parallel.function.par_Matern = function(sim){
           control=list(trace=4,
                        pgtol=0,
                        parscale=rep(0.1,length(par)),
-                       maxit=300))
+                       maxit=500))
   }
   fit.Model.par_Matern = optim_par_Matern.loglikelihood(par=init.par_Matern)
   pred = par_Matern.pred.summary(fit.Model.par_Matern$par, data_train, data_test)
@@ -79,11 +79,11 @@ parallel.function.par_Matern = function(sim){
 mainDir <- "."
 subDir <- "GKriging_nonstat_results/"
 dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
-
+print("[*][*][*][*][*] Fitting cokriging LMC [*][*][*][*][*]")
 fx1 = foreach(sim=1:num_sim) %dopar% parallel.function.lmc(sim)
-
 saveRDS(fx1, "GKriging_nonstat_results/pred_list_nonstat_lmc.rds")
 
+print("[*][*][*][*][*] Fitting cokriging parsimonious Matern [*][*][*][*][*]")
 fx2 = foreach(sim=1:num_sim) %dopar% parallel.function.par_Matern(sim)
 saveRDS(fx2, "GKriging_nonstat_results/pred_list_nonstat_par_Matern.rds")
 

@@ -83,7 +83,7 @@ for(res in 1:length(num_basis)){
   K = K + num_basis[res]
 }
 
-write.csv(phi,"python_scripts/phi.csv",  row.names = F, col.names = F)
+write.csv(phi,"src/python_scripts/phi.csv",  row.names = F)
 
 for(i in 1:num_sim){
   even = seq(2,sum(num_basis),2)

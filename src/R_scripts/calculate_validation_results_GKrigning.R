@@ -3,7 +3,7 @@ args = commandArgs(trailingOnly=TRUE)
 file_path = args[1]
 setwd(file_path)
 
-num_sim = 100
+num_sim = args[2]
 
 mainDir <- "."
 subDir <- "plot_results/"

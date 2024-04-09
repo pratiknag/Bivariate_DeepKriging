@@ -7,11 +7,13 @@ Created on Tuesday August  29 23:33:04 2023
 @author: Pratik
 """
 
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import pandas as pd
 import keras
 from keras.models import Sequential,Model
 from keras.layers import Dense, Dropout, BatchNormalization,Input
-from keras.wrappers.scikit_learn import KerasRegressor
+# from keras.wrappers.scikit_learn import KerasRegressor
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import KFold
@@ -19,13 +21,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 import numpy as np
 from numpy import exp
-# Library for Gaussian process
-# import GPy
-##Library for visualization
 import matplotlib.pyplot as plt
-# %matplotlib inline
-# %config InlineBackend.figure_format = 'svg'
-# import matplotlib;matplotlib.rcParams['figure.figsize'] = (8,6)
 from sklearn.model_selection import train_test_split
 import pylab 
 import time
@@ -52,7 +48,7 @@ def fit_model(X_train, y_train,base_model1):
     ensemble_model.add(Dense(50, activation = "relu"))
     ensemble_model.add(Dense(2, activation='linear'))
     ensemble_model.layers[-3].trainable = False
-    optimizer = keras.optimizers.Adam(lr=0.01)
+    optimizer = keras.optimizers.Adam(learning_rate=0.01)
     ensemble_model.compile(optimizer=optimizer, loss='mse', metrics=['mse','mae'])
     ensemble_model.fit(X_train, y_train,
                        epochs = 200, batch_size = 128, verbose = 0)
