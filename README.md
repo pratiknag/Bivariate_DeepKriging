@@ -1,8 +1,32 @@
 # Bivariate DeepKriging for Large-scale Spatial Interpolation of Wind Fields
 
-This is the Readme file for reproducing the results of the paper [Bivariate DeepKriging](https://doi.org/10.1080/00401706.2025.2453197). The commands we have provided below. Running all of them sequentially will generate two plots in .pdf format inside the plot_results/ directory. These two plots are represented in the paper Fig 2,3. 
+This repository contains the README file for reproducing the results presented in the paper:  
+[*Bivariate DeepKriging*](https://doi.org/10.1080/00401706.2025.2453197).  
 
-Nag, P., Sun, Y., & Reich, B. J. (2025). Bivariate DeepKriging for Large-scale Spatial Interpolation of Wind Fields. Technometrics, 1–20. https://doi.org/10.1080/00401706.2025.2453197
+## Instructions
+
+To reproduce the results, please run the provided commands sequentially. The commands will generate two plots in `.pdf` format, which will be saved in the `plot_results/` directory. These plots correspond to **Figures 2 and 3** in the paper.  
+
+## Citation
+
+If you use this code or find it helpful, please cite the paper:  
+
+**Nag, P., Sun, Y., & Reich, B. J. (2025).**  
+*Bivariate DeepKriging for Large-Scale Spatial Interpolation of Wind Fields*.  
+Technometrics, 1–20.  
+[https://doi.org/10.1080/00401706.2025.2453197](https://doi.org/10.1080/00401706.2025.2453197)
+
+---
+
+## Repository Contents
+
+- **Code**: Scripts to reproduce the results.
+- **Output**: Plots generated in the `plot_results/` directory.
+
+---
+
+Feel free to reach out if you encounter any issues or have any questions!
+
 
 ## Pre-requisites
 
