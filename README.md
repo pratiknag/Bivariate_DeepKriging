@@ -1,4 +1,8 @@
-This is the Readme file for reproducing the results when of the paper [Bivariate DeepKriging](https://arxiv.org/abs/2307.08038). The commands we have provided below. Running all of them sequentially will generate two plots in .pdf format inside the plot_results/ directory. These two plots are represented in the paper Fig 2,3. 
+# Bivariate DeepKriging for Large-scale Spatial Interpolation of Wind Fields
+
+This is the Readme file for reproducing the results of the paper [Bivariate DeepKriging](https://doi.org/10.1080/00401706.2025.2453197). The commands we have provided below. Running all of them sequentially will generate two plots in .pdf format inside the plot_results/ directory. These two plots are represented in the paper Fig 2,3. 
+
+Nag, P., Sun, Y., & Reich, B. J. (2025). Bivariate DeepKriging for Large-scale Spatial Interpolation of Wind Fields. Technometrics, 1–20. https://doi.org/10.1080/00401706.2025.2453197
 
 ## Pre-requisites
 
